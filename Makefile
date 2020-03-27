@@ -2,7 +2,7 @@ OUT_DIR = out
 INCLUDE_DIR = include
 SRC_DIR = src
 
-_DEPS = chip8.h
+_DEPS = chip8.h font.h
 DEPS = $(addprefix $(INCLUDE_DIR)/,$(_DEPS))
 
 _OBJECTS = main.o chip8.o
