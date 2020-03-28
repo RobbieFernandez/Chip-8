@@ -65,6 +65,9 @@ void Chip8::handle_op_code(uint16_t op_code) {
         case 0x8000:
             opcode_handler = &Chip8::handle_op_code_8;
             break;
+        case 0x9000:
+            opcode_handler = &Chip8::handle_op_code_9;
+            break;
         default:
             opcode_handler = &Chip8::handle_op_code_unknown;
             break;
@@ -233,6 +236,16 @@ void Chip8::handle_op_code_8(uint16_t opcode) {
         }
     }
 
+    increment_pc();
+}
+
+void Chip8::handle_op_code_9(uint16_t opcode) {
+    // Opcode 9XY0, Skips the next instruction if VX doesn't equal VY
+    uint16_t x = (opcode & 0x0F00) >> 8;
+    uint16_t y = (opcode & 0x00F0) >> 4;
+    if (V[x] == V[y]) {
+        increment_pc();
+    }
     increment_pc();
 }
 
