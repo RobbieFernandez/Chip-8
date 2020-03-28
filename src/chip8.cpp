@@ -136,8 +136,8 @@ void Chip8::handle_op_code_2(uint16_t opcode) {
 
 void Chip8::handle_op_code_3(uint16_t opcode) {
     // Opcode 3XNN, Skip next instruction if Vx == NN
-    uint16_t x = (opcode & 0x0F00) >> 8;
-    uint16_t val = opcode & 0x00FF;
+    uint8_t x = (opcode & 0x0F00) >> 8;
+    uint8_t val = opcode & 0x00FF;
     if (V[x] == val) {
         increment_pc();
     }
@@ -146,8 +146,8 @@ void Chip8::handle_op_code_3(uint16_t opcode) {
 
 void Chip8::handle_op_code_4(uint16_t opcode) {
     // Opcode 4XNN, Skip next instruction if Vx != NN
-    uint16_t x = (opcode & 0x0F00) >> 8;
-    uint16_t val = opcode & 0x00FF;
+    uint8_t x = (opcode & 0x0F00) >> 8;
+    uint8_t val = opcode & 0x00FF;
     if (V[x] != val) {
         increment_pc();
     }
@@ -156,8 +156,8 @@ void Chip8::handle_op_code_4(uint16_t opcode) {
 
 void Chip8::handle_op_code_5(uint16_t opcode) {
     // Opcode 5XY0, Skip next instruction if Vx == Vy
-    uint16_t x = (opcode & 0x0F00) >> 8;
-    uint16_t y = (opcode & 0x00F0) >> 4;
+    uint8_t x = (opcode & 0x0F00) >> 8;
+    uint8_t y = (opcode & 0x00F0) >> 4;
     if (V[x] == V[y]) {
         increment_pc();
     }
@@ -166,16 +166,16 @@ void Chip8::handle_op_code_5(uint16_t opcode) {
 
 void Chip8::handle_op_code_6(uint16_t opcode) {
     // Opcode 6XNN, Set Vx to NN
-    uint16_t x = (opcode & 0x0F00) >> 8;
-    uint16_t val = (opcode & 0x00FF);
+    uint8_t x = (opcode & 0x0F00) >> 8;
+    uint8_t val = (opcode & 0x00FF);
     V[x] = val;
     increment_pc();
 }
 
 void Chip8::handle_op_code_7(uint16_t opcode) {
     // Opcode 7XNN, Adds NN to VX. (Carry flag is not changed)
-    uint16_t x = (opcode & 0x0F00) >> 8;
-    uint16_t val = (opcode & 0x00FF);
+    uint8_t x = (opcode & 0x0F00) >> 8;
+    uint8_t val = (opcode & 0x00FF);
     V[x] += val;
     increment_pc();
 }
@@ -185,8 +185,8 @@ void Chip8::handle_op_code_8(uint16_t opcode) {
     // They are all of the format 8XYN, Where X and Y refer to registers and N indicates the operation
     // Switch on N and perform the corresponding operation.
     uint8_t last_nibble = opcode & 0x000F;
-    uint16_t x = (opcode & 0x0F00) >> 8;
-    uint16_t y = (opcode & 0x00F0) >> 4;
+    uint8_t x = (opcode & 0x0F00) >> 8;
+    uint8_t y = (opcode & 0x00F0) >> 4;
 
     switch (last_nibble) {
         case 0x0: {
@@ -251,8 +251,8 @@ void Chip8::handle_op_code_8(uint16_t opcode) {
 
 void Chip8::handle_op_code_9(uint16_t opcode) {
     // Opcode 9XY0, Skips the next instruction if VX doesn't equal VY
-    uint16_t x = (opcode & 0x0F00) >> 8;
-    uint16_t y = (opcode & 0x00F0) >> 4;
+    uint8_t x = (opcode & 0x0F00) >> 8;
+    uint8_t y = (opcode & 0x00F0) >> 4;
     if (V[x] == V[y]) {
         increment_pc();
     }
