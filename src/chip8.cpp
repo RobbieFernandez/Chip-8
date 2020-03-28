@@ -116,7 +116,7 @@ void Chip8::handle_op_code_2(uint16_t opcode) {
 
 void Chip8::handle_op_code_3(uint16_t opcode) {
     // Opcode 3XNN, Skip next instruction if Vx == NN
-    uint16_t reg = (opcode & 0x0F00) >> 16;
+    uint16_t reg = (opcode & 0x0F00) >> 8;
     uint16_t val = opcode & 0x00FF;
     if (V[reg] == val) {
         increment_pc();
@@ -126,7 +126,7 @@ void Chip8::handle_op_code_3(uint16_t opcode) {
 
 void Chip8::handle_op_code_4(uint16_t opcode) {
     // Opcode 4XNN, Skip next instruction if Vx != NN
-    uint16_t reg = (opcode & 0x0F00) >> 16;
+    uint16_t reg = (opcode & 0x0F00) >> 8;
     uint16_t val = opcode & 0x00FF;
     if (V[reg] != val) {
         increment_pc();
@@ -136,8 +136,8 @@ void Chip8::handle_op_code_4(uint16_t opcode) {
 
 void Chip8::handle_op_code_5(uint16_t opcode) {
     // Opcode 5XY0, Skip next instruction if Vx == Vy
-    uint16_t reg1 = (opcode & 0x0F00) >> 16;
-    uint16_t reg2 = (opcode & 0x00F0) >> 8;
+    uint16_t reg1 = (opcode & 0x0F00) >> 8;
+    uint16_t reg2 = (opcode & 0x00F0) >> 4;
     if (V[reg1] == V[reg2]) {
         increment_pc();
     }
