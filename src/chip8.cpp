@@ -47,6 +47,9 @@ void Chip8::handle_op_code(uint16_t op_code) {
         case 0x2000:
             opcode_handler = &Chip8::handle_op_code_2;
             break;
+        case 0x3000:
+            opcode_handler = &Chip8::handle_op_code_3;
+            break;
         default:
             opcode_handler = &Chip8::handle_op_code_unknown;
             break;
@@ -103,6 +106,16 @@ void Chip8::handle_op_code_2(uint16_t opcode) {
     uint16_t address = opcode & 0x0FFF;
     stack.push(pc);
     pc = address;
+}
+
+void Chip8::handle_op_code_3(uint16_t opcode) {
+    // Opcode 3XNN, Skip next instruction if Vx == NN
+    uint16_t reg = (opcode & 0x0F00) >> 16;
+    uint16_t val = opcode & 0x00FF;
+    if (V[reg] == val) {
+        increment_pc();
+    }
+    increment_pc();
 }
 
 void Chip8::handle_op_code_unknown(uint16_t opcode) {
