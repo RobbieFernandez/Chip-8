@@ -41,6 +41,9 @@ void Chip8::handle_op_code(uint16_t op_code) {
         case 0x0000:
             opcode_handler = &Chip8::handle_op_code_0;
             break;
+        case 0x1000:
+            opcode_handler = &Chip8::handle_op_code_1;
+            break;
         default:
             opcode_handler = &Chip8::handle_op_code_unknown;
             break;
@@ -84,6 +87,12 @@ void Chip8::handle_op_code_0(uint16_t opcode) {
         pc = stack.top();
         stack.pop();
     }
+}
+
+void Chip8::handle_op_code_1(uint16_t opcode) {
+    // Opcode 1NNN, GOTO to address NNN
+    uint16_t address = opcode & 0x0FFF; // TODO - Is this meant to be shifted 1 to the left ??
+    pc = address;
 }
 
 void Chip8::handle_op_code_unknown(uint16_t opcode) {
