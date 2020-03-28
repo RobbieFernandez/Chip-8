@@ -78,6 +78,9 @@ void Chip8::handle_op_code(uint16_t op_code) {
         case 0xC000:
             opcode_handler = &Chip8::handle_op_code_C;
             break;
+        case 0xD000:
+            opcode_handler = &Chip8::handle_op_code_D;
+            break;
         default:
             opcode_handler = &Chip8::handle_op_code_unknown;
             break;
@@ -281,6 +284,48 @@ void Chip8::handle_op_code_C(uint16_t opcode) {
     uint8_t x = (opcode & 0x0F00) >> 8;
     uint8_t n = opcode & 0x00FF;
     V[x] = n & rand;
+    increment_pc();
+}
+
+void Chip8::handle_op_code_D(uint16_t opcode) {
+    // Opcode DXYN, Draws a sprite at coordinate (VX, VY)
+    uint8_t x = (opcode & 0x0F00) >> 8;
+    uint8_t y = (opcode & 0x00F0) >> 4;
+    uint8_t height = (opcode & 0x000F);
+
+    uint8_t xPos = V[x] % SCREEN_WIDTH;
+    uint8_t yPos = V[y] % SCREEN_HEIGHT;
+    uint8_t width = 8;
+    uint8_t* pixel_row_ptr = &(memory[I]);
+
+    bool pixels_changed = false;
+
+    for (int row=yPos; row < (row + height) && row < SCREEN_HEIGHT; row++) {
+        uint8_t pixel_row = *pixel_row_ptr;
+
+        // Extract individual pixel values from this byte.
+        std::array<bool, 8> pixel_values {
+            (bool) (pixel_row & 0x80),
+            (bool) (pixel_row & 0x40),
+            (bool) (pixel_row & 0x20),
+            (bool) (pixel_row & 0x10),
+            (bool) (pixel_row & 0x8),
+            (bool) (pixel_row & 0x4),
+            (bool) (pixel_row & 0x2),
+            (bool) (pixel_row & 0x1),
+        };
+
+        int gfx_array_offset = row * SCREEN_WIDTH;
+
+        for (int i=0; i < 8 && xPos + i < SCREEN_WIDTH; i++) {
+            int gfx_index = gfx_array_offset + i;
+            bool pixel_value = pixel_values[i];
+            bool old_gfx_value = gfx[gfx_index];
+            gfx[gfx_index] = gfx[gfx_index] != pixel_value;  // XOR
+            pixels_changed = pixels_changed || old_gfx_value != gfx[gfx_index];
+        }
+    }
+
     increment_pc();
 }
 

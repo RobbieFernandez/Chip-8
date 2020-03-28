@@ -3,6 +3,8 @@
 #include <string>
 
 #define CARRY_FLAG 0xF
+#define SCREEN_HEIGHT 32
+#define SCREEN_WIDTH 64
 
 class Chip8 {
     public:
@@ -19,7 +21,7 @@ class Chip8 {
         uint8_t sound_timer {0};
         std::array<uint8_t, 4096> memory {}; // 4K of memory
         std::array<uint8_t, 16> V {};  // 16 CPU registers. 15 general purpose registers and carry flag
-        std::array<uint8_t, 64 * 32> gfx {}; // GFX Buffer
+        std::array<bool, SCREEN_HEIGHT * SCREEN_WIDTH> gfx {}; // GFX Buffer
         std::stack<uint16_t> stack;
 
         // Methods
