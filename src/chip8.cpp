@@ -56,6 +56,9 @@ void Chip8::handle_op_code(uint16_t op_code) {
         case 0x5000:
             opcode_handler = &Chip8::handle_op_code_5;
             break;
+        case 0x6000:
+            opcode_handler = &Chip8::handle_op_code_6;
+            break;
         default:
             opcode_handler = &Chip8::handle_op_code_unknown;
             break;
@@ -141,6 +144,14 @@ void Chip8::handle_op_code_5(uint16_t opcode) {
     if (V[reg1] == V[reg2]) {
         increment_pc();
     }
+    increment_pc();
+}
+
+void Chip8::handle_op_code_6(uint16_t opcode) {
+    // Opcode 6XNN, Set Vx to NN
+    uint16_t reg = (opcode & 0x0F00) >> 8;
+    uint16_t val = (opcode & 0x00FF);
+    V[reg] = val;
     increment_pc();
 }
 
