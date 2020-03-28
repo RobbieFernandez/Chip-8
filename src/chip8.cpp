@@ -65,8 +65,6 @@ void Chip8::handle_op_code(uint16_t op_code) {
     }
 
     (this->*opcode_handler)(op_code);
-
-    pc += 2;
 }
 
 void Chip8::perform_cycle() {
