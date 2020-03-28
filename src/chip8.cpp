@@ -68,6 +68,9 @@ void Chip8::handle_op_code(uint16_t op_code) {
         case 0x9000:
             opcode_handler = &Chip8::handle_op_code_9;
             break;
+        case 0xA000:
+            opcode_handler = &Chip8::handle_op_code_A;
+            break;
         default:
             opcode_handler = &Chip8::handle_op_code_unknown;
             break;
@@ -249,7 +252,11 @@ void Chip8::handle_op_code_9(uint16_t opcode) {
     increment_pc();
 }
 
-
+void Chip8::handle_op_code_A(uint16_t opcode) {
+    // Opcode ANNN, Sets I to the address NNN.
+    I = opcode & 0x0FFF;
+    increment_pc();
+}
 
 void Chip8::handle_op_code_unknown(uint16_t opcode) {
     std::cerr << "Unknown opcode: " << std::hex << opcode << std::dec << std::endl;
