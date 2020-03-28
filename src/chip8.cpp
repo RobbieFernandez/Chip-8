@@ -59,6 +59,9 @@ void Chip8::handle_op_code(uint16_t op_code) {
         case 0x6000:
             opcode_handler = &Chip8::handle_op_code_6;
             break;
+        case 0x7000:
+            opcode_handler = &Chip8::handle_op_code_7;
+            break;
         default:
             opcode_handler = &Chip8::handle_op_code_unknown;
             break;
@@ -153,6 +156,13 @@ void Chip8::handle_op_code_6(uint16_t opcode) {
     increment_pc();
 }
 
+void Chip8::handle_op_code_7(uint16_t opcode) {
+    // Opcode 7XNN, Adds NN to VX. (Carry flag is not changed)
+    uint16_t reg = (opcode & 0x0F00) >> 8;
+    uint16_t val = (opcode & 0x00FF);
+    V[reg] += val;
+    increment_pc();
+}
 
 void Chip8::handle_op_code_unknown(uint16_t opcode) {
     std::cerr << "Unknown opcode: " << std::hex << opcode << std::dec << std::endl;
