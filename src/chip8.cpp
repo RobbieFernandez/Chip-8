@@ -71,6 +71,9 @@ void Chip8::handle_op_code(uint16_t op_code) {
         case 0xA000:
             opcode_handler = &Chip8::handle_op_code_A;
             break;
+        case 0xB000:
+            opcode_handler = &Chip8::handle_op_code_B;
+            break;
         default:
             opcode_handler = &Chip8::handle_op_code_unknown;
             break;
@@ -256,6 +259,12 @@ void Chip8::handle_op_code_A(uint16_t opcode) {
     // Opcode ANNN, Sets I to the address NNN.
     I = opcode & 0x0FFF;
     increment_pc();
+}
+
+void Chip8::handle_op_code_B(uint16_t opcode) {
+    // Opcode BNNN, Jumps to the address NNN plus V0..
+    uint16_t addr = opcode & 0x0FFF;
+    pc = V[0] + addr;
 }
 
 void Chip8::handle_op_code_unknown(uint16_t opcode) {
