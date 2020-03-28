@@ -21,5 +21,6 @@ int main(int argc, char** argv) {
 
     while (true) {
         chip.perform_cycle();
+        chip.draw_screen();
     }
 }

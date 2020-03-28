@@ -12,6 +12,7 @@ class Chip8 {
         void load_font();
         void load_rom(std::string rom_name);
         void print_memory();
+        void draw_screen();
 
     private:
         // Fields

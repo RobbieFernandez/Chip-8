@@ -322,14 +322,27 @@ void Chip8::handle_op_code_D(uint16_t opcode) {
             bool pixel_value = pixel_values[i];
             bool old_gfx_value = gfx[gfx_index];
             gfx[gfx_index] = gfx[gfx_index] != pixel_value;  // XOR
-            pixels_changed = pixels_changed || old_gfx_value != gfx[gfx_index];
+            pixels_changed = pixels_changed || (old_gfx_value != gfx[gfx_index]);
         }
     }
 
+    V[CARRY_FLAG] = pixels_changed ? 1 : 0;
     increment_pc();
 }
 
 void Chip8::handle_op_code_unknown(uint16_t opcode) {
     std::cerr << "Unknown opcode: " << std::hex << opcode << std::dec << std::endl;
     increment_pc(); // Does it really make sense to continue in the scenario?
+}
+
+void Chip8::draw_screen() {
+    // Just draw to a terminal for now
+    for (int row=0; row < SCREEN_HEIGHT; row++) {
+        for (int col=0; col < SCREEN_WIDTH; col++) {
+            int i = row * SCREEN_WIDTH + col;
+            std::string out = gfx[i] ? "X" : " ";
+            std::cout << out;
+        }
+        std::cout << std::endl;
+    }
 }
