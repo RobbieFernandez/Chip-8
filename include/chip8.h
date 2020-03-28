@@ -2,6 +2,8 @@
 #include <array>
 #include <string>
 
+#define CARRY_FLAG 0xF
+
 class Chip8 {
     public:
         void perform_cycle();

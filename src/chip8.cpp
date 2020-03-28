@@ -62,6 +62,9 @@ void Chip8::handle_op_code(uint16_t op_code) {
         case 0x7000:
             opcode_handler = &Chip8::handle_op_code_7;
             break;
+        case 0x8000:
+            opcode_handler = &Chip8::handle_op_code_8;
+            break;
         default:
             opcode_handler = &Chip8::handle_op_code_unknown;
             break;
@@ -163,6 +166,77 @@ void Chip8::handle_op_code_7(uint16_t opcode) {
     V[reg] += val;
     increment_pc();
 }
+
+void Chip8::handle_op_code_8(uint16_t opcode) {
+    // Many opcodes begin with 8
+    // They are all of the format 8XYN, Where X and Y refer to registers and N indicates the operation
+    // Switch on N and perform the corresponding operation.
+    uint8_t last_nibble = opcode & 0x000F;
+    uint16_t x = (opcode & 0x0F00) >> 8;
+    uint16_t y = (opcode & 0x00F0) >> 4;
+
+    switch (last_nibble) {
+        case 0x0: {
+            // 8XY0, Sets VX to the value of VY.
+            V[x] = V[y];
+            break;
+        }
+        case 0x1: {
+            // 8XY1, Sets VX to VX or VY. (Bitwise OR operation)
+            V[x] |= V[y];
+            break;
+        }
+        case 0x2: {
+            // 8XY2, Sets VX to VX and VY. (Bitwise AND operation)
+            V[x] &= V[y];
+            break;
+        }
+        case 0x3: {
+            // 8XY3, Sets VX to VX xor VY.
+            V[x] ^= V[y];
+            break;
+        }
+        case 0x4: {
+            // 8XY4, Adds VY to VX. VF is set to 1 when there's a carry, and to 0 when there isn't.
+            uint16_t res = V[x] + V[y];
+            V[CARRY_FLAG] = res > 0xFF ? 1 : 0;
+            res |= 0xFF; // Truncate to 8 bits
+            V[x] = (uint8_t) res;
+            break;
+        }
+        case 0x5: {
+            // 8XY5, VY is subtracted from VX. VF is set to 0 when there's a borrow, and 1 when there isn't
+            V[CARRY_FLAG] = V[x] > V[y] ? 1 : 0;
+            V[x] = V[x] - V[y];
+            break;
+        }
+        case 0x6: {
+            // 8XY6, Stores the least significant bit of VX in VF and then shifts VX to the right by 1.[b]
+            V[CARRY_FLAG] = V[x] & 0x01;
+            V[x] = V[x] >> 1;
+            break;
+        }
+        case 0x7: {
+            // 8XY7, Sets VX to VY minus VX. VF is set to 0 when there's a borrow, and 1 when there isn't.
+            V[CARRY_FLAG] = V[y] > V[x] ? 1 : 0;
+            V[x] = V[y] - V[x];
+            break;
+        }
+        case 0xE: {
+            // 8XYE, Stores the most significant bit of VX in VF and then shifts VX to the left by 1.[b]
+            V[CARRY_FLAG] = V[x] & 0x01;
+            V[x] = V[x] << 1;
+            break;
+        }
+        default: {
+            return handle_op_code_unknown(opcode);
+        }
+    }
+
+    increment_pc();
+}
+
+
 
 void Chip8::handle_op_code_unknown(uint16_t opcode) {
     std::cerr << "Unknown opcode: " << std::hex << opcode << std::dec << std::endl;
