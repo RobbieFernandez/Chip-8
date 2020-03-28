@@ -32,6 +32,22 @@ uint16_t Chip8::get_next_op_code() {
 
 void Chip8::handle_op_code(uint16_t op_code) {
     std::cout << "Handling op code " << std::hex << op_code << ", PC: " << std::dec << pc << std::endl;
+
+    uint16_t first_nibble = op_code & 0xF000;
+
+    void (Chip8::*opcode_handler)(uint16_t op_code);
+
+    switch(first_nibble) {
+        case 0x0000:
+            opcode_handler = &Chip8::handle_op_code_0;
+            break;
+        default:
+            opcode_handler = &Chip8::handle_op_code_unknown;
+            break;
+    }
+
+    (this->*opcode_handler)(op_code);
+
     pc += 2;
 }
 
@@ -49,4 +65,28 @@ void Chip8::print_memory() {
     for (int i=0; i < memory.size(); i++) {
         std::cout << std::dec << i << ": " << std::hex << (int)memory[i] << std::dec << std::endl;
     }
+}
+
+inline void Chip8::increment_pc() {
+    pc += 2;
+}
+
+//  ---------- Opcode handlers ----------
+void Chip8::handle_op_code_0(uint16_t opcode) {
+    if (opcode == 0x00E0) {
+        // Clear the screen by zeroing the gfx array
+        for (int i=0; i<gfx.size(); i++) {
+            gfx[i] = 0;
+        }
+        increment_pc();
+    } else if (opcode == 0x00EE) {
+        // Return from a subroutine by popping the stack
+        pc = stack.top();
+        stack.pop();
+    }
+}
+
+void Chip8::handle_op_code_unknown(uint16_t opcode) {
+    std::cerr << "Unknown opcode: " << std::hex << opcode << std::dec << std::endl;
+    increment_pc(); // Does it really make sense to continue in the scenario?
 }

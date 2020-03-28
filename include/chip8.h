@@ -21,6 +21,24 @@ class Chip8 {
         std::stack<uint16_t> stack;
 
         // Methods
-        void handle_op_code(uint16_t op_code);
+        inline void increment_pc();
         uint16_t get_next_op_code();
+        void handle_op_code(uint16_t op_code);
+        void handle_op_code_0(uint16_t opcode);
+        void handle_op_code_1(uint16_t opcode);
+        void handle_op_code_2(uint16_t opcode);
+        void handle_op_code_3(uint16_t opcode);
+        void handle_op_code_4(uint16_t opcode);
+        void handle_op_code_5(uint16_t opcode);
+        void handle_op_code_6(uint16_t opcode);
+        void handle_op_code_7(uint16_t opcode);
+        void handle_op_code_8(uint16_t opcode);
+        void handle_op_code_9(uint16_t opcode);
+        void handle_op_code_A(uint16_t opcode);
+        void handle_op_code_B(uint16_t opcode);
+        void handle_op_code_C(uint16_t opcode);
+        void handle_op_code_D(uint16_t opcode);
+        void handle_op_code_E(uint16_t opcode);
+        void handle_op_code_F(uint16_t opcode);
+        void handle_op_code_unknown(uint16_t opcode);
 };
