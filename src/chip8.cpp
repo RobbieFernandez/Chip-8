@@ -1,4 +1,5 @@
 #include <iostream>
+#include <random>
 #include <fstream>
 #include "chip8.h"
 #include "font.h"
@@ -73,6 +74,9 @@ void Chip8::handle_op_code(uint16_t op_code) {
             break;
         case 0xB000:
             opcode_handler = &Chip8::handle_op_code_B;
+            break;
+        case 0xC000:
+            opcode_handler = &Chip8::handle_op_code_C;
             break;
         default:
             opcode_handler = &Chip8::handle_op_code_unknown;
@@ -265,6 +269,19 @@ void Chip8::handle_op_code_B(uint16_t opcode) {
     // Opcode BNNN, Jumps to the address NNN plus V0..
     uint16_t addr = opcode & 0x0FFF;
     pc = V[0] + addr;
+}
+
+void Chip8::handle_op_code_C(uint16_t opcode) {
+    // Opcode CXNN, Sets VX to the result of a bitwise and operation on a random number and NN.
+    std::random_device dev;  // TODO - Construct this only once
+    std::mt19937 rng(dev());
+    std::uniform_int_distribution<std::mt19937::result_type> dist(0, 255);
+    uint8_t rand = dist(rng);
+
+    uint8_t x = (opcode & 0x0F00) >> 8;
+    uint8_t n = opcode & 0x00FF;
+    V[x] = n & rand;
+    increment_pc();
 }
 
 void Chip8::handle_op_code_unknown(uint16_t opcode) {
