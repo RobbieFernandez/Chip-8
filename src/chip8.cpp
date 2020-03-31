@@ -269,7 +269,7 @@ void Chip8::handle_op_code_8(uint16_t opcode) {
         }
         case 0xE: {
             // 8XYE, Stores the most significant bit of VX in VF and then shifts VX to the left by 1.[b]
-            V[CARRY_FLAG] = V[x] & 0x01;
+            V[CARRY_FLAG] = V[x] & 0x80;
             V[x] = V[x] << 1;
             break;
         }
