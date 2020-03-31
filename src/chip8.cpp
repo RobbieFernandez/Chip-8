@@ -32,8 +32,6 @@ uint16_t Chip8::get_next_op_code() {
 }
 
 void Chip8::handle_op_code(uint16_t op_code) {
-    std::cout << "Handling op code " << std::hex << op_code << ", PC: " << std::dec << pc << std::endl;
-
     uint16_t first_nibble = op_code & 0xF000;
 
     void (Chip8::*opcode_handler)(uint16_t op_code);
@@ -436,10 +434,13 @@ void Chip8::draw_screen() {
     for (int row=0; row < SCREEN_HEIGHT; row++) {
         for (int col=0; col < SCREEN_WIDTH; col++) {
             int i = row * SCREEN_WIDTH + col;
-            std::string out = gfx[i] ? "*" : ".";
+            std::string out = gfx[i] ? "█" : " ";
             std::cout << out;
         }
         std::cout << std::endl;
     }
-    std::cout << std::endl;
+
+    for (int i=0; i<SCREEN_HEIGHT; i++) {
+        std::cout << "\x1b[A";
+    }
 }
