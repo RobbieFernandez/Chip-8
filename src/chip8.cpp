@@ -81,6 +81,9 @@ void Chip8::handle_op_code(uint16_t op_code) {
         case 0xD000:
             opcode_handler = &Chip8::handle_op_code_D;
             break;
+        case 0xE000:
+            opcode_handler = &Chip8::handle_op_code_E;
+            break;
         default:
             opcode_handler = &Chip8::handle_op_code_unknown;
             break;
@@ -328,6 +331,20 @@ void Chip8::handle_op_code_D(uint16_t opcode) {
     }
 
     V[CARRY_FLAG] = pixels_changed ? 1 : 0;
+    increment_pc();
+}
+
+void Chip8::handle_op_code_E(uint16_t opcode) {
+    uint8_t last_byte = opcode & 0x00FF;
+    if (last_byte == 0x9E) {
+        // EX9E	Skips the next instruction if the key stored in VX is pressed.
+        // TODO - Check this (Assume nothing's pressed for now)
+    } else if (last_byte == 0xA1) {
+        // EXA1	Skips the next instruction if the key stored in VX isn't pressed.
+        // TODO - Check this (Assume nothing's pressed for now)
+        increment_pc();
+    }
+
     increment_pc();
 }
 
