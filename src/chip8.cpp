@@ -216,7 +216,7 @@ void Chip8::handle_op_code_8(uint16_t opcode) {
             // 8XY4, Adds VY to VX. VF is set to 1 when there's a carry, and to 0 when there isn't.
             uint16_t res = V[x] + V[y];
             V[CARRY_FLAG] = res > 0xFF ? 1 : 0;
-            res |= 0xFF; // Truncate to 8 bits
+            res &= 0xFF; // Truncate to 8 bits
             V[x] = (uint8_t) res;
             break;
         }
@@ -302,6 +302,7 @@ void Chip8::handle_op_code_D(uint16_t opcode) {
 
     for (int row=yPos; row < (row + height) && row < SCREEN_HEIGHT; row++) {
         uint8_t pixel_row = *pixel_row_ptr;
+        pixel_row_ptr++;
 
         // Extract individual pixel values from this byte.
         std::array<bool, 8> pixel_values {
@@ -340,9 +341,10 @@ void Chip8::draw_screen() {
     for (int row=0; row < SCREEN_HEIGHT; row++) {
         for (int col=0; col < SCREEN_WIDTH; col++) {
             int i = row * SCREEN_WIDTH + col;
-            std::string out = gfx[i] ? "X" : " ";
+            std::string out = gfx[i] ? "X" : ".";
             std::cout << out;
         }
         std::cout << std::endl;
     }
+    std::cout << std::endl;
 }
