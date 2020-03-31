@@ -414,7 +414,7 @@ void Chip8::handle_op_code_F(uint16_t opcode) {
         case 0x29: {
             // FX29 Sets I to the location of the sprite for the character in VX.
             uint8_t character = V[x];
-            I = x * 5;
+            I = character * 5;
             break;
         }
         case 0x33: {
