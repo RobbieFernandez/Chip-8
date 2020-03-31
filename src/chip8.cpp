@@ -1,6 +1,7 @@
 #include <iostream>
 #include <random>
 #include <fstream>
+#include <thread>
 #include "chip8.h"
 #include "font.h"
 
@@ -93,12 +94,17 @@ void Chip8::handle_op_code(uint16_t op_code) {
 }
 
 void Chip8::perform_cycle() {
-    // Get the next op code from the rom
-    // Parse the op code
-    // Handle the opcode
-    // Increment the PC if necessary
+    auto start = std::chrono::steady_clock::now();
+    std::chrono::milliseconds sleep_duration((int) (1.0 / CPU_SPEED  * 1000));
+
     uint16_t next_op_code = get_next_op_code();
     handle_op_code(next_op_code);
+
+    std::this_thread::sleep_for(sleep_duration );
+    auto elapsed = std::chrono::steady_clock::now() - start;
+    auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
+
+    update_timer(elapsed_ms.count() * SOUND_SPEED);
 }
 
 void Chip8::print_memory() {
@@ -110,6 +116,26 @@ void Chip8::print_memory() {
 
 inline void Chip8::increment_pc() {
     pc += 2;
+}
+
+void Chip8::update_timer(double delta) {
+    delay_timer_high_res -= delta  / 1000;
+    delay_timer_high_res = delay_timer_high_res < 0 ? 0 : delay_timer_high_res;
+    delay_timer = (uint8_t) delay_timer_high_res;
+
+    sound_timer_high_res -= delta / 1000;
+    sound_timer_high_res = sound_timer_high_res < 0 ? 0 : sound_timer_high_res;
+    sound_timer = (uint8_t) sound_timer_high_res;
+}
+
+void Chip8::set_sound_timer(uint8_t timer) {
+    sound_timer_high_res = timer;
+    sound_timer = timer;
+}
+
+void Chip8::set_delay_timer(uint8_t timer) {
+    delay_timer_high_res = timer;
+    delay_timer = timer;
 }
 
 //  ---------- Opcode handlers ----------
@@ -370,12 +396,12 @@ void Chip8::handle_op_code_F(uint16_t opcode) {
         }
         case 0x15: {
             // FX15 Sets the delay timer to VX.
-            delay_timer = V[x];
+            set_delay_timer(V[x]);
             break;
         }
         case 0x18: {
             // FX18 Sets the sound timer to VX.
-            sound_timer = V[x];
+            set_sound_timer(V[x]);
             break;
         }
         case 0x1E: {
