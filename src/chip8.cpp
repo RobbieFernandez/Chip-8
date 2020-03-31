@@ -84,6 +84,9 @@ void Chip8::handle_op_code(uint16_t op_code) {
         case 0xE000:
             opcode_handler = &Chip8::handle_op_code_E;
             break;
+        case 0xF000:
+            opcode_handler = &Chip8::handle_op_code_F;
+            break;
         default:
             opcode_handler = &Chip8::handle_op_code_unknown;
             break;
@@ -347,6 +350,81 @@ void Chip8::handle_op_code_E(uint16_t opcode) {
 
     increment_pc();
 }
+
+void Chip8::handle_op_code_F(uint16_t opcode) {
+    // Many opcodes begin with F
+    // They are all of the format FXNN, Where X refers to a register and NN indicates the operation
+    // Switch on NN and perform the corresponding operation.
+
+    uint8_t last_byte = opcode & 0x00FF;
+    uint8_t x = (opcode & 0x0F00) >> 8;
+
+    switch(last_byte) {
+        case 0x07: {
+            // FX07 Sets VX to the value of the delay timer.
+            V[x] = delay_timer;
+            break;
+        }
+        case 0x0A: {
+            // FX0A A key press is awaited, and then stored in VX. (Blocking Operation. All instruction halted until next key event)
+            // TODO
+            V[x] = 0x01;
+            break;
+        }
+        case 0x15: {
+            // FX15 Sets the delay timer to VX.
+            delay_timer = V[x];
+            break;
+        }
+        case 0x18: {
+            // FX18 Sets the sound timer to VX.
+            sound_timer = V[x];
+            break;
+        }
+        case 0x1E: {
+            // FX1E Adds VX to I. VF is set to 1 when there is a range overflow (I+VX>0xFFF), and to 0 when there isn't.
+            uint16_t val = I + V[x];
+            V[CARRY_FLAG] = val > 0xFFF ? 1 : 0;
+            I = val;
+            break;
+        }
+        case 0x29: {
+            // FX29 Sets I to the location of the sprite for the character in VX.
+            uint8_t character = V[x];
+            I = x * 5;
+            break;
+        }
+        case 0x33: {
+            // FX33 Stores the binary-coded decimal representation of VX, with the most significant of three digits at the address in I,
+            // the middle digit at I plus 1, and the least significant digit at I plus 2.
+            uint8_t val = V[x];
+            memory[I] = val / 100; // hundreds
+            memory[I + 1] = (val % 100) / 10; // tens;
+            memory[I + 2] = val % 10; // ones
+            break;
+        }
+        case 0x55: {
+            // FX55 Stores V0 to VX (including VX) in memory starting at address I. The offset from I is increased by 1 for each value written, but I itself is left unmodified.
+            for (int i=0; i<=x; i++) {
+                memory[I + i] = V[i];
+            }
+            break;
+        }
+        case 0x65: {
+            // FX65 Fills V0 to VX (including VX) with values from memory starting at address I. The offset from I is increased by 1 for each value written, but I itself is left unmodified.
+            for (int i=0; i<=x; i++) {
+                V[i] = memory[I + i];
+            }
+            break;
+        }
+        default: {
+            return handle_op_code_unknown(opcode);
+        }
+    }
+
+    increment_pc();
+}
+
 
 void Chip8::handle_op_code_unknown(uint16_t opcode) {
     std::cerr << "Unknown opcode: " << std::hex << opcode << std::dec << std::endl;
