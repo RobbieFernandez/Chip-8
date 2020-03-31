@@ -323,7 +323,7 @@ void Chip8::handle_op_code_D(uint16_t opcode) {
             bool pixel_value = pixel_values[i];
             bool old_gfx_value = gfx[gfx_index];
             gfx[gfx_index] = gfx[gfx_index] != pixel_value;  // XOR
-            pixels_changed = pixels_changed || (old_gfx_value != gfx[gfx_index]);
+            pixels_changed = pixels_changed || (old_gfx_value && !gfx[gfx_index]);
         }
     }
 
@@ -341,7 +341,7 @@ void Chip8::draw_screen() {
     for (int row=0; row < SCREEN_HEIGHT; row++) {
         for (int col=0; col < SCREEN_WIDTH; col++) {
             int i = row * SCREEN_WIDTH + col;
-            std::string out = gfx[i] ? "X" : ".";
+            std::string out = gfx[i] ? "*" : ".";
             std::cout << out;
         }
         std::cout << std::endl;
