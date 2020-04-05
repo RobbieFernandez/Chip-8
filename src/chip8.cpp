@@ -157,7 +157,7 @@ void Chip8::handle_op_code_0(uint16_t opcode) {
         stack.pop();
     }
     // If this is a return instruction we still need to increment the PC.
-    // We pushed the PC onto the stack without incrementing it, which means the instruction to
+    // We pushed the PC onto the stack without incrementing it, which means the instruction on
     // the stack will be the invocation of the current subroutine.
     // So we want to increment the PC here to resume execution from after that call.
     increment_pc();
