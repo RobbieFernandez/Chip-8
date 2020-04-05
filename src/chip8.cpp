@@ -40,6 +40,8 @@ void Chip8::handle_op_code(uint16_t op_code) {
 
     void (Chip8::*opcode_handler)(uint16_t op_code);
 
+    std::cout << "opcode: " << std::hex << op_code << std::dec << std::endl;
+
     switch(first_nibble) {
         case 0x0000:
             opcode_handler = &Chip8::handle_op_code_0;
@@ -149,12 +151,16 @@ void Chip8::handle_op_code_0(uint16_t opcode) {
         for (int i=0; i<gfx.size(); i++) {
             gfx[i] = 0;
         }
-        increment_pc();
     } else if (opcode == 0x00EE) {
         // Return from a subroutine by popping the stack
         pc = stack.top();
         stack.pop();
     }
+    // If this is a return instruction we still need to increment the PC.
+    // We pushed the PC onto the stack without incrementing it, which means the instruction to
+    // the stack will be the invocation of the current subroutine.
+    // So we want to increment the PC here to resume execution from after that call.
+    increment_pc();
 }
 
 void Chip8::handle_op_code_1(uint16_t opcode) {
