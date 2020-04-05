@@ -329,8 +329,9 @@ void Chip8::handle_op_code_D(uint16_t opcode) {
     uint8_t* pixel_row_ptr = &(memory[I]);
 
     bool pixels_changed = false;
+    uint8_t max_row = std::min(yPos + height, SCREEN_HEIGHT);
 
-    for (int row=yPos; row < (row + height) && row < SCREEN_HEIGHT; row++) {
+    for (int row=yPos; row < max_row; row++) {
         uint8_t pixel_row = *pixel_row_ptr;
         pixel_row_ptr++;
 
@@ -348,11 +349,11 @@ void Chip8::handle_op_code_D(uint16_t opcode) {
 
         int gfx_array_offset = row * SCREEN_WIDTH;
 
-        for (int i=0; i < 8 && xPos + i < SCREEN_WIDTH; i++) {
+        for (int i=0; i < width && xPos + i < SCREEN_WIDTH; i++) {
             int gfx_index = gfx_array_offset + xPos + i;
             bool pixel_value = pixel_values[i];
             bool old_gfx_value = gfx[gfx_index];
-            gfx[gfx_index] = gfx[gfx_index] != pixel_value;  // XOR
+            gfx[gfx_index] = gfx[gfx_index] != pixel_value; // XOR
             pixels_changed = pixels_changed || (old_gfx_value && !gfx[gfx_index]);
         }
     }
