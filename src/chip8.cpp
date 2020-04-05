@@ -410,7 +410,7 @@ void Chip8::handle_op_code_F(uint16_t opcode) {
             // FX1E Adds VX to I. VF is set to 1 when there is a range overflow (I+VX>0xFFF), and to 0 when there isn't.
             uint16_t val = I + V[x];
             V[CARRY_FLAG] = val > 0xFFF ? 1 : 0;
-            I = val;
+            I = val & 0xFFF;
             break;
         }
         case 0x29: {
