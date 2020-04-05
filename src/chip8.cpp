@@ -286,7 +286,7 @@ void Chip8::handle_op_code_9(uint16_t opcode) {
     // Opcode 9XY0, Skips the next instruction if VX doesn't equal VY
     uint8_t x = (opcode & 0x0F00) >> 8;
     uint8_t y = (opcode & 0x00F0) >> 4;
-    if (V[x] == V[y]) {
+    if (V[x] != V[y]) {
         increment_pc();
     }
     increment_pc();
