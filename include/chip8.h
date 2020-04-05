@@ -2,6 +2,8 @@
 #include <array>
 #include <string>
 
+#include <SFML/Graphics.hpp>
+
 #define CARRY_FLAG 0xF
 #define SCREEN_HEIGHT 32
 #define SCREEN_WIDTH 64
@@ -9,13 +11,15 @@
 #define SOUND_SPEED 60
 #define CPU_SPEED 500
 
+
 class Chip8 {
     public:
+        bool draw_flag;
         void perform_cycle();
         void load_font();
         void load_rom(std::string rom_name);
         void print_memory();
-        void draw_screen();
+        void draw_screen(sf::RenderWindow& window);
         void update_timer(double delta);
 
     private:

@@ -3,6 +3,9 @@
 #include <fstream>
 #include <thread>
 #include <stdio.h>
+
+#include <SFML/System/Vector2.hpp>
+
 #include "chip8.h"
 #include "font.h"
 
@@ -322,6 +325,7 @@ void Chip8::handle_op_code_D(uint16_t opcode) {
     uint8_t x = (opcode & 0x0F00) >> 8;
     uint8_t y = (opcode & 0x00F0) >> 4;
     uint8_t height = (opcode & 0x000F);
+    draw_flag = true;
 
     uint8_t xPos = V[x] % SCREEN_WIDTH;
     uint8_t yPos = V[y] % SCREEN_HEIGHT;
@@ -456,18 +460,21 @@ void Chip8::handle_op_code_unknown(uint16_t opcode) {
     increment_pc(); // Does it really make sense to continue in the scenario?
 }
 
-void Chip8::draw_screen() {
-    // Just draw to a terminal for now
+void Chip8::draw_screen(sf::RenderWindow& window) {
+    draw_flag = false;
+    window.clear(sf::Color::Black);
+
+    sf::RectangleShape pixel(sf::Vector2f(1, 1));
+
     for (int row=0; row < SCREEN_HEIGHT; row++) {
         for (int col=0; col < SCREEN_WIDTH; col++) {
             int i = row * SCREEN_WIDTH + col;
-            std::string out = gfx[i] ? "█" : " ";
-            std::cout << out;
+            if (gfx[i]) {
+                pixel.setPosition(col, row);
+                window.draw(pixel);
+            }
         }
-        std::cout << std::endl;
     }
 
-    for (int i=0; i<SCREEN_HEIGHT; i++) {
-        std::cout << "\x1b[A";
-    }
+    window.display();
 }
