@@ -2,6 +2,7 @@
 #include <random>
 #include <fstream>
 #include <thread>
+#include <stdio.h>
 #include "chip8.h"
 #include "font.h"
 
@@ -269,7 +270,7 @@ void Chip8::handle_op_code_8(uint16_t opcode) {
         }
         case 0xE: {
             // 8XYE, Stores the most significant bit of VX in VF and then shifts VX to the left by 1.[b]
-            V[CARRY_FLAG] = V[x] & 0x80;
+            V[CARRY_FLAG] = (V[x] & 0x80) ? 1 : 0;
             V[x] = V[x] << 1;
             break;
         }
