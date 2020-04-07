@@ -7,7 +7,10 @@
 #include <SFML/System/Vector2.hpp>
 
 #include "chip8.h"
+#include "keyboard.h"
 #include "font.h"
+
+Chip8::Chip8(): keyboard() {};
 
 void Chip8::load_font() {
     for (int i=0; i<CHIP8_FONT_SIZE; i++) {
@@ -374,13 +377,18 @@ void Chip8::handle_op_code_D(uint16_t opcode) {
 
 void Chip8::handle_op_code_E(uint16_t opcode) {
     uint8_t last_byte = opcode & 0x00FF;
+    uint8_t x = (opcode & 0x0F00) > 8;
+
     if (last_byte == 0x9E) {
         // EX9E	Skips the next instruction if the key stored in VX is pressed.
-        // TODO - Check this (Assume nothing's pressed for now)
+        if (keyboard.is_key_down(V[x])) {
+            increment_pc();
+        }
     } else if (last_byte == 0xA1) {
         // EXA1	Skips the next instruction if the key stored in VX isn't pressed.
-        // TODO - Check this (Assume nothing's pressed for now)
-        increment_pc();
+        if (keyboard.is_key_up(V[x])) {
+            increment_pc();
+        }
     }
 
     increment_pc();

@@ -1,8 +1,12 @@
+#pragma once
+
 #include <stack>
 #include <array>
 #include <string>
 
 #include <SFML/Graphics.hpp>
+
+#include "keyboard.h"
 
 #define CARRY_FLAG 0xF
 #define SCREEN_HEIGHT 32
@@ -15,12 +19,14 @@
 class Chip8 {
     public:
         bool draw_flag;
+        Keyboard keyboard;
         void perform_cycle();
         void load_font();
         void load_rom(std::string rom_name);
         void print_memory();
         void draw_screen(sf::RenderWindow& window);
         void update_timer(double delta);
+        Chip8();
 
     private:
         // Fields

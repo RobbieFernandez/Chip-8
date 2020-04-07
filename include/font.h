@@ -1,3 +1,5 @@
+#pragma once
+
 #define CHIP8_FONT_SIZE 80 // Number of bytes the font occupies
 
 uint8_t chip8_fontset[80] = {

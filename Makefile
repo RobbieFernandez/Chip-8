@@ -2,10 +2,10 @@ OUT_DIR = out
 INCLUDE_DIR = include
 SRC_DIR = src
 
-_DEPS = chip8.h font.h
+_DEPS = chip8.h font.h keyboard.h
 DEPS = $(addprefix $(INCLUDE_DIR)/,$(_DEPS))
 
-_OBJECTS = main.o chip8.o
+_OBJECTS = main.o chip8.o keyboard.o
 OBJECTS = $(addprefix $(OUT_DIR)/,$(_OBJECTS))
 
 CC = g++
