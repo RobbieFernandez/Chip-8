@@ -410,8 +410,7 @@ void Chip8::handle_op_code_F(uint16_t opcode) {
         }
         case 0x0A: {
             // FX0A A key press is awaited, and then stored in VX. (Blocking Operation. All instruction halted until next key event)
-            // TODO
-            V[x] = 0x01;
+            V[x] = keyboard.await_key_press();
             break;
         }
         case 0x15: {
