@@ -362,8 +362,9 @@ void Chip8::handle_op_code_D(uint16_t opcode) {
 
         int gfx_array_offset = row * SCREEN_WIDTH;
 
-        for (int i=0; i < width && xPos + i < SCREEN_WIDTH; i++) {
-            int gfx_index = gfx_array_offset + xPos + i;
+        for (int i=0; i < width; i++) {
+            int row_position = (xPos + i) % SCREEN_WIDTH;
+            int gfx_index = gfx_array_offset + row_position;
             bool pixel_value = pixel_values[i];
             bool old_gfx_value = gfx[gfx_index];
             gfx[gfx_index] = gfx[gfx_index] != pixel_value; // XOR
