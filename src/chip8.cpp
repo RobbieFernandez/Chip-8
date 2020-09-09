@@ -43,8 +43,6 @@ void Chip8::handle_op_code(uint16_t op_code) {
 
     void (Chip8::*opcode_handler)(uint16_t op_code);
 
-    std::cout << "opcode: " << std::hex << op_code << std::dec << std::endl;
-
     switch(first_nibble) {
         case 0x0000:
             opcode_handler = &Chip8::handle_op_code_0;
