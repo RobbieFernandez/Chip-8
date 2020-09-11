@@ -102,12 +102,12 @@ void Chip8::handle_op_code(uint16_t op_code) {
 
 void Chip8::perform_cycle() {
     auto start = std::chrono::steady_clock::now();
-    std::chrono::milliseconds sleep_duration((int) (1.0 / CPU_SPEED  * 1000));
+    int sleep_duration = (int) (1.0 / CPU_SPEED  * 1000);
 
     uint16_t next_op_code = get_next_op_code();
     handle_op_code(next_op_code);
 
-    std::this_thread::sleep_for(sleep_duration );
+    SDL_Delay(sleep_duration);
     auto elapsed = std::chrono::steady_clock::now() - start;
     auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
 
