@@ -1,11 +1,14 @@
+#include <algorithm>
 #include "keyboard.h"
 
 bool Keyboard::is_key_down(uint8_t key) {
-    return sf::Keyboard::isKeyPressed(key_map[key]);
+    const Uint8* currentKeyStates = SDL_GetKeyboardState(NULL);
+    return currentKeyStates[key_map[key]];
 }
 
 bool Keyboard::is_key_up(uint8_t key) {
-    return !is_key_down(key);
+    const Uint8* currentKeyStates = SDL_GetKeyboardState(NULL);
+    return !currentKeyStates[key_map[key]];
 }
 
 uint8_t Keyboard::await_key_press() {
@@ -27,6 +30,6 @@ uint8_t Keyboard::await_key_press() {
     }
 }
 
-void Keyboard::remap_key(uint8_t chip_key, sf::Keyboard::Key key) {
+void Keyboard::remap_key(uint8_t chip_key, SDL_Scancode key) {
     key_map[chip_key] = key;
 }

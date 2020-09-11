@@ -4,8 +4,6 @@
 #include <thread>
 #include <stdio.h>
 
-#include <SFML/System/Vector2.hpp>
-
 #include "chip8.h"
 #include "keyboard.h"
 #include "font.h"
