@@ -1,4 +1,3 @@
-#include <algorithm>
 #include "keyboard.h"
 
 bool Keyboard::is_key_down(uint8_t key) {
@@ -11,14 +10,21 @@ bool Keyboard::is_key_up(uint8_t key) {
     return !currentKeyStates[key_map[key]];
 }
 
+std::array<bool, 16> Keyboard::get_key_state() {
+    std::array<bool, 16> key_state;
+
+    for (int i=0; i<16; i++) {
+        key_state[i] = is_key_down(i);
+    }
+
+    return key_state;
+}
+
 uint8_t Keyboard::await_key_press() {
-    auto check_key = [this](uint8_t k) {return is_key_down(k);};
-    std::array<bool, 16> prev_key_state;
-    std::transform (key_map.begin(), key_map.end(), prev_key_state.begin(), check_key);
+    auto prev_key_state = get_key_state();
 
     while (true) {
-        std::array<bool, 16> key_state;
-        std::transform (key_map.begin(), key_map.end(), key_state.begin(), check_key);
+        auto key_state = get_key_state();
 
         for (int k=0; k<=0xF; k++) {
             if(key_state[k] && !prev_key_state[k]) {

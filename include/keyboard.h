@@ -13,6 +13,7 @@ class Keyboard {
         void remap_key(uint8_t chip_key, SDL_Scancode);
 
     private:
+        std::array<bool, 16> get_key_state();
         std::array<SDL_Scancode, 16> key_map {
             SDL_SCANCODE_X,
             SDL_SCANCODE_1,
