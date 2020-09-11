@@ -4,7 +4,7 @@
 #include <array>
 #include <string>
 
-#include <SFML/Graphics.hpp>
+#include <SDL2/SDL.h>
 
 #include "keyboard.h"
 
@@ -24,7 +24,7 @@ class Chip8 {
         void load_font();
         void load_rom(std::string rom_name);
         void print_memory();
-        void draw_screen(sf::RenderWindow& window);
+        void draw_screen(SDL_Renderer* renderer_ptr);
         void update_timer(double delta);
         Chip8();
 

@@ -472,21 +472,21 @@ void Chip8::handle_op_code_unknown(uint16_t opcode) {
     increment_pc(); // Does it really make sense to continue in the scenario?
 }
 
-void Chip8::draw_screen(sf::RenderWindow& window) {
+void Chip8::draw_screen(SDL_Renderer* renderer_ptr) {
     draw_flag = false;
-    window.clear(sf::Color::Black);
-
-    sf::RectangleShape pixel(sf::Vector2f(1, 1));
+    SDL_SetRenderDrawColor(renderer_ptr, 0, 0, 0, 0xFF);
+    SDL_RenderClear(renderer_ptr);
 
     for (int row=0; row < SCREEN_HEIGHT; row++) {
         for (int col=0; col < SCREEN_WIDTH; col++) {
             int i = row * SCREEN_WIDTH + col;
             if (gfx[i]) {
-                pixel.setPosition(col, row);
-                window.draw(pixel);
+                SDL_Rect pixel = {col, row, 1, 1};
+                SDL_SetRenderDrawColor(renderer_ptr, 0xFF, 0xFF, 0xFF, 0xFF);
+                SDL_RenderDrawRect(renderer_ptr, &pixel);
             }
         }
     }
 
-    window.display();
+    SDL_RenderPresent(renderer_ptr);
 }

@@ -10,7 +10,7 @@ OBJECTS = $(addprefix $(OUT_DIR)/,$(_OBJECTS))
 
 CC = g++
 OUT = $(OUT_DIR)/chip8
-CFLAGS = -I$(INCLUDE_DIR) -lsfml-graphics -lsfml-window -lsfml-system
+CFLAGS = -I$(INCLUDE_DIR) -lsfml-graphics -lsfml-window -lsfml-system -lSDL2
 
 build: $(OUT)
 

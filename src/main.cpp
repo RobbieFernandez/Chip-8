@@ -1,7 +1,32 @@
 #include <iostream>
 #include "chip8.h"
 
-#include <SFML/Graphics.hpp>
+#include <SDL2/SDL.h>
+
+bool init(SDL_Window*& window, SDL_Renderer*& renderer) {
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+        printf("Error initialising SDL: %s\n", SDL_GetError());
+        return false;
+    }
+
+    window = SDL_CreateWindow(
+        "CHIP-8",
+        SDL_WINDOWPOS_UNDEFINED,
+        SDL_WINDOWPOS_UNDEFINED,
+        SCREEN_WIDTH,
+        SCREEN_HEIGHT,
+        SDL_WINDOW_SHOWN
+    );
+
+    if (window == NULL) {
+        printf("Error creating window: %s\n", SDL_GetError());
+        return false;
+    }
+
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    return true;
+}
+
 
 int main(int argc, char** argv) {
     if (argc < 2) {
@@ -21,28 +46,32 @@ int main(int argc, char** argv) {
         return err;
     }
 
-    sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "CHIP-8");
+    SDL_Window* window = NULL;
+    SDL_Renderer* renderer = NULL;
 
-    sf::View view(
-        sf::Vector2f((float) SCREEN_WIDTH / 2, (float) SCREEN_HEIGHT / 2),
-        sf::Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT)
-    );
+    bool init_succeeded = init(window, renderer);
 
-    window.setView(view);
+    if (!init_succeeded) {
+        return 1;
+    }
 
-    while (window.isOpen()) {
-        sf::Event event;
-        while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {
-                window.close();
-            }
-            else if (event.type == sf::Event::Resized) {
-                chip.draw_flag = true;
+    SDL_RenderSetLogicalSize(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+    bool user_quit = false;
+
+    while (!user_quit) {
+        SDL_Event event;
+        while (SDL_PollEvent(&event) != 0) {
+            if (event.type == SDL_QUIT) {
+                user_quit = true;
             }
         }
         chip.perform_cycle();
         if (chip.draw_flag) {
-            chip.draw_screen(window);
+            chip.draw_screen(renderer);
         }
     }
+
+    SDL_DestroyWindow(window);
+    SDL_Quit();
 }
